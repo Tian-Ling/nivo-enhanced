@@ -71,6 +71,8 @@ const Line = props => {
         useMesh,
         debugMesh,
 
+        useBrush,
+
         onMouseEnter,
         onMouseMove,
         onMouseLeave,
@@ -114,6 +116,8 @@ const Line = props => {
 
     const [currentPoint, setCurrentPoint] = useState(null)
     const [currentSlice, setCurrentSlice] = useState(null)
+    const [brushStart, setBrushStart] = useState(null)
+    const [brushEnd, setBrushEnd] = useState(null)
 
     const legendData = useMemo(
         () =>
@@ -208,6 +212,8 @@ const Line = props => {
                 tooltip={sliceTooltip}
                 current={currentSlice}
                 setCurrent={setCurrentSlice}
+                setBrushStart={setBrushStart}
+                setBrushEnd={setBrushEnd}
             />
         )
     }
@@ -277,31 +283,45 @@ const Line = props => {
         )
     }
 
-    return (
-        <SvgWrapper width={outerWidth} height={outerHeight} margin={margin}>
-            {layers.map((layer, i) => {
-                if (typeof layer === 'function') {
-                    return (
-                        <Fragment key={i}>
-                            {layer({
-                                ...props,
-                                innerWidth,
-                                innerHeight,
-                                series,
-                                slices,
-                                points,
-                                xScale,
-                                yScale,
-                                lineGenerator,
-                                areaGenerator,
-                            })}
-                        </Fragment>
-                    )
-                }
+    if (isInteractive && useBrush && enableSlices && currentSlice) {
+        layerById.brush = (
+            <rect
+                key="brush"
+                style={{fill:'blue'}}
+                x={currentSlice.x}
+                height={innerHeight}
+                width={20}
+            />
+        )
+    }
 
-                return layerById[layer]
-            })}
-        </SvgWrapper>
+    return (
+        <>
+            <SvgWrapper width={outerWidth} height={outerHeight} margin={margin}>
+                {layers.map((layer, i) => {
+                    if (typeof layer === 'function') {
+                        return (
+                            <Fragment key={i}>
+                                {layer({
+                                    ...props,
+                                    innerWidth,
+                                    innerHeight,
+                                    series,
+                                    slices,
+                                    points,
+                                    xScale,
+                                    yScale,
+                                    lineGenerator,
+                                    areaGenerator,
+                                })}
+                            </Fragment>
+                        )
+                    }
+
+                    return layerById[layer]
+                })}
+            </SvgWrapper>
+        </>
     )
 }
 

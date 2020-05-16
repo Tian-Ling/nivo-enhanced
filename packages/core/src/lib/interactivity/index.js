@@ -10,6 +10,7 @@
 export * from './detect'
 
 export const getRelativeCursor = (el, event) => {
+    console.log(el, event);
     const { clientX, clientY } = event
     const bounds = el.getBoundingClientRect()
 

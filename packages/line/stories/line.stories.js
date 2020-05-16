@@ -16,7 +16,7 @@ import { Defs } from '@nivo/core'
 import { area, curveMonotoneX } from 'd3-shape'
 import * as time from 'd3-time'
 import { timeFormat } from 'd3-time-format'
-import { Line } from '../src'
+import { Line, ResponsiveLine } from '../src'
 
 const data = generateDrinkStats(18)
 const commonProperties = {
@@ -1009,5 +1009,61 @@ stories.add(
         info: {
             text: `You can customize line styles using the 'layers' property and implement your own line rendering.`,
         },
+    }
+)
+
+const brushData = [
+    {
+        "id": "brush data",
+        "color": "hsl(290, 70%, 50%)",
+        "data": [
+            {
+                "x": 0,
+                "y": 178
+            },
+            {
+                "x": 1,
+                "y": 297
+            },
+            {
+                "x": 2,
+                "y": 3
+            },
+            {
+                "x": 3,
+                "y": 120
+            },
+            {
+                "x": 4,
+                "y": 128
+            },
+            {
+                "x": 5,
+                "y": 289
+            },
+            {
+                "x": 6,
+                "y": 196
+            }
+        ]
+    }
+];
+
+stories.add(
+    'brush tool',
+    () => (
+        <div style={{width: 900, height: 400}}>
+            <ResponsiveLine
+                data={brushData}
+                enableSlices={'x'}
+                margin={{ top: 20, right: 20, bottom: 60, left: 80 }}
+                useBrush
+            />
+        </div>
+    ),
+    {
+        info: {
+            text: `Click and drag to select range`
+        }
     }
 )
