@@ -119,6 +119,8 @@ const Line = props => {
     const [currentSlice, setCurrentSlice] = useState(null)
     const [brushStart, setBrushStart] = useState(null)
     const [brushEnd, setBrushEnd] = useState(null)
+    const [isSettingBrushRange, setIsSettingBrushRange] = useState(false);
+    const [brushPoints, setBrushPoints] = useState(null);
 
     const legendData = useMemo(
         () =>
@@ -131,6 +133,14 @@ const Line = props => {
                 .reverse(),
         [series]
     )
+
+    useEffect(() => {
+        if (!isSettingBrushRange && brushStart && brushEnd) {
+            const brushes = [brushStart, brushEnd];
+            const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);
+            setBrushPoints(points.filter(point => point.x >= startPoint.x && point.x <= endPoint.x));
+        }
+    }, [brushStart, brushEnd, isSettingBrushRange])
 
     const layerById = {
         grid: (
@@ -213,8 +223,10 @@ const Line = props => {
                 tooltip={sliceTooltip}
                 current={currentSlice}
                 setCurrent={setCurrentSlice}
-                setBrushStart={setBrushStart}
-                setBrushEnd={setBrushEnd}
+                isSettingBrushRange={useBrush ? isSettingBrushRange : null}
+                setIsSettingBrushRange={useBrush ? setIsSettingBrushRange : null}
+                setBrushStart={useBrush ? setBrushStart : null}
+                setBrushEnd={useBrush ? setBrushEnd : null}
             />
         )
     }

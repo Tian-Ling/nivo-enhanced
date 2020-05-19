@@ -6,13 +6,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import React, { memo, useState } from 'react'
+import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 import SlicesItem from './SlicesItem'
 
-const Slices = ({ slices, axis, debug, height, tooltip, current, setCurrent, setBrushStart, setBrushEnd }) => {
-    const [isMouseDown, setIsMouseDown] = useState(false);
-
+const Slices = ({ slices, axis, debug, height, tooltip, current, setCurrent, isSettingBrushRange, setIsSettingBrushRange, setBrushStart, setBrushEnd }) => {
     return slices.map(slice => (
         <SlicesItem
             key={slice.id}
@@ -21,11 +19,11 @@ const Slices = ({ slices, axis, debug, height, tooltip, current, setCurrent, set
             debug={debug}
             height={height}
             tooltip={tooltip}
-            isMouseDown={isMouseDown}
             setCurrent={setCurrent}
+            isSettingBrushRange={isSettingBrushRange}
+            setIsSettingBrushRange={setIsSettingBrushRange}
             setBrushStart={setBrushStart}
             setBrushEnd={setBrushEnd}
-            setIsMouseDown={setIsMouseDown}
             isCurrent={current !== null && current.id === slice.id}
         />
     ))
@@ -50,6 +48,8 @@ Slices.propTypes = {
     tooltip: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
     current: PropTypes.object,
     setCurrent: PropTypes.func.isRequired,
+    isSettingBrushRange: PropTypes.bool,
+    setIsSettingBrushRange: PropTypes.func,
     setBrushStart: PropTypes.func,
     setBrushEnd: PropTypes.func,
 }

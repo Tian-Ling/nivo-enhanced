@@ -10,15 +10,16 @@ import React, { memo, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { useTooltip } from '@nivo/tooltip'
 
-const SlicesItem = ({ slice, axis, debug, tooltip, isCurrent, isMouseDown, setCurrent, setBrushStart, setBrushEnd, setIsMouseDown }) => {
+const SlicesItem = ({ slice, axis, debug, tooltip, isCurrent, setCurrent, isSettingBrushRange, setIsSettingBrushRange, setBrushStart, setBrushEnd }) => {
     const { showTooltipFromEvent, hideTooltip } = useTooltip()
 
+    const brushEnabled = setIsSettingBrushRange && setBrushStart && setBrushEnd;
 
     const handleMouseDown = useCallback(
         () => {
             setBrushStart(slice);
             setBrushEnd(null);
-            setIsMouseDown(true);
+            setIsSettingBrushRange(true);
         },
         [slice]
     )
@@ -26,8 +27,9 @@ const SlicesItem = ({ slice, axis, debug, tooltip, isCurrent, isMouseDown, setCu
     const handleMouseUp = useCallback(
         () => {
             setBrushEnd(slice);
-            setIsMouseDown(false);
-        }
+            setIsSettingBrushRange(false);
+        },
+        [slice]
     )
 
     const handleMouseEnter = useCallback(
@@ -41,11 +43,11 @@ const SlicesItem = ({ slice, axis, debug, tooltip, isCurrent, isMouseDown, setCu
     const handleMouseMove = useCallback(
         event => {
             showTooltipFromEvent(React.createElement(tooltip, { slice, axis }), event, 'right')
-            if (isMouseDown) {
+            if (brushEnabled && isSettingBrushRange) {
                 setBrushEnd(slice);
             }
         },
-        [isMouseDown, showTooltipFromEvent, tooltip, slice]
+        [isSettingBrushRange, showTooltipFromEvent, tooltip, slice]
     )
 
     const handleMouseLeave = useCallback(() => {
@@ -64,8 +66,8 @@ const SlicesItem = ({ slice, axis, debug, tooltip, isCurrent, isMouseDown, setCu
             strokeOpacity={0.75}
             fill="red"
             fillOpacity={isCurrent && debug ? 0.35 : 0}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
+            onMouseDown={brushEnabled ? handleMouseDown : null}
+            onMouseUp={brushEnabled ? handleMouseUp : null}
             onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
@@ -81,10 +83,10 @@ SlicesItem.propTypes = {
     tooltip: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
     isCurrent: PropTypes.bool.isRequired,
     setCurrent: PropTypes.func.isRequired,
+    isSettingBrushRange: PropTypes.bool,
+    setIsSettingBrushRange: PropTypes.func,
     setBrushStart: PropTypes.func,
     setBrushEnd: PropTypes.func,
-    isMouseDown: PropTypes.bool.isRequired,
-    setIsMouseDown: PropTypes.func.isRequired,
 }
 
 export default memo(SlicesItem)
