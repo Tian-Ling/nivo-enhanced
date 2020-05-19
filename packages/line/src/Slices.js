@@ -6,11 +6,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 import PropTypes from 'prop-types'
 import SlicesItem from './SlicesItem'
 
 const Slices = ({ slices, axis, debug, height, tooltip, current, setCurrent, setBrushStart, setBrushEnd }) => {
+    const [isMouseDown, setIsMouseDown] = useState(false);
+
     return slices.map(slice => (
         <SlicesItem
             key={slice.id}
@@ -19,9 +21,11 @@ const Slices = ({ slices, axis, debug, height, tooltip, current, setCurrent, set
             debug={debug}
             height={height}
             tooltip={tooltip}
+            isMouseDown={isMouseDown}
             setCurrent={setCurrent}
             setBrushStart={setBrushStart}
             setBrushEnd={setBrushEnd}
+            setIsMouseDown={setIsMouseDown}
             isCurrent={current !== null && current.id === slice.id}
         />
     ))

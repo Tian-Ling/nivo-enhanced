@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import React, { Fragment, useState, useMemo } from 'react'
+import React, { Fragment, useEffect, useState, useMemo } from 'react'
 import { withContainer, useDimensions, useTheme, SvgWrapper, CartesianMarkers } from '@nivo/core'
 import { useInheritedColor } from '@nivo/colors'
 import { Axes, Grid } from '@nivo/axes'
@@ -19,6 +19,7 @@ import Lines from './Lines'
 import Slices from './Slices'
 import Points from './Points'
 import Mesh from './Mesh'
+import Brush from './Brush'
 
 const Line = props => {
     const {
@@ -283,14 +284,12 @@ const Line = props => {
         )
     }
 
-    if (isInteractive && useBrush && enableSlices && currentSlice) {
+    if (isInteractive && useBrush && enableSlices && brushStart && brushEnd) {
         layerById.brush = (
-            <rect
+            <Brush
                 key="brush"
-                style={{fill:'blue'}}
-                x={currentSlice.x}
-                height={innerHeight}
-                width={20}
+                brushStart={brushStart}
+                brushEnd={brushEnd}
             />
         )
     }

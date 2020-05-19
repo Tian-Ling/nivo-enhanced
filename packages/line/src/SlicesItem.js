@@ -10,12 +10,15 @@ import React, { memo, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { useTooltip } from '@nivo/tooltip'
 
-const SlicesItem = ({ slice, axis, debug, tooltip, isCurrent, setCurrent, setBrushStart, setBrushEnd }) => {
+const SlicesItem = ({ slice, axis, debug, tooltip, isCurrent, isMouseDown, setCurrent, setBrushStart, setBrushEnd, setIsMouseDown }) => {
     const { showTooltipFromEvent, hideTooltip } = useTooltip()
+
 
     const handleMouseDown = useCallback(
         () => {
             setBrushStart(slice);
+            setBrushEnd(null);
+            setIsMouseDown(true);
         },
         [slice]
     )
@@ -23,6 +26,7 @@ const SlicesItem = ({ slice, axis, debug, tooltip, isCurrent, setCurrent, setBru
     const handleMouseUp = useCallback(
         () => {
             setBrushEnd(slice);
+            setIsMouseDown(false);
         }
     )
 
@@ -37,8 +41,11 @@ const SlicesItem = ({ slice, axis, debug, tooltip, isCurrent, setCurrent, setBru
     const handleMouseMove = useCallback(
         event => {
             showTooltipFromEvent(React.createElement(tooltip, { slice, axis }), event, 'right')
+            if (isMouseDown) {
+                setBrushEnd(slice);
+            }
         },
-        [showTooltipFromEvent, tooltip, slice]
+        [isMouseDown, showTooltipFromEvent, tooltip, slice]
     )
 
     const handleMouseLeave = useCallback(() => {
@@ -76,6 +83,8 @@ SlicesItem.propTypes = {
     setCurrent: PropTypes.func.isRequired,
     setBrushStart: PropTypes.func,
     setBrushEnd: PropTypes.func,
+    isMouseDown: PropTypes.bool.isRequired,
+    setIsMouseDown: PropTypes.func.isRequired,
 }
 
 export default memo(SlicesItem)
