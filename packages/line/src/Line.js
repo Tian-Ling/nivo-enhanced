@@ -95,8 +95,13 @@ const Line = props => {
         partialMargin
     )
 
+    const theme = useTheme()
+    const getPointColor = useInheritedColor(pointColor, theme)
+    const getPointBorderColor = useInheritedColor(pointBorderColor, theme)
+    const [brushData, setBrushData] = useState(data);
+
     const { lineGenerator, areaGenerator, series, xScale, yScale, slices, points } = useLine({
-        data,
+        data: brushData,
         xScale: xScaleSpec,
         xFormat,
         yScale: yScaleSpec,
@@ -111,16 +116,12 @@ const Line = props => {
         enableSlices,
     })
 
-    const theme = useTheme()
-    const getPointColor = useInheritedColor(pointColor, theme)
-    const getPointBorderColor = useInheritedColor(pointBorderColor, theme)
-
     const [currentPoint, setCurrentPoint] = useState(null)
     const [currentSlice, setCurrentSlice] = useState(null)
     const [brushStart, setBrushStart] = useState(null)
     const [brushEnd, setBrushEnd] = useState(null)
     const [isSettingBrushRange, setIsSettingBrushRange] = useState(false);
-    const [brushPoints, setBrushPoints] = useState(null);
+    const [brushPoints, setBrushPoints] = useState(points);
 
     const legendData = useMemo(
         () =>
@@ -137,10 +138,24 @@ const Line = props => {
     useEffect(() => {
         if (!isSettingBrushRange && brushStart && brushEnd) {
             const brushes = [brushStart, brushEnd];
-            const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);
-            setBrushPoints(points.filter(point => point.x >= startPoint.x && point.x <= endPoint.x));
+            const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);  
+                      
+            const filteredData = [];
+            data.forEach(datum => {
+                const dataPoints = datum.data.filter(dataPoint => dataPoint.x >= startPoint.data.x && dataPoint.x <= endPoint.data.x);
+                const brushDatum = {...datum, data: dataPoints };
+                filteredData.push(brushDatum);
+            });
+
+            setBrushData(filteredData);
+            setBrushStart(null);
+            setBrushEnd(null);
         }
     }, [brushStart, brushEnd, isSettingBrushRange])
+
+    useEffect(() => {
+        setBrushPoints(points);
+    }, [points])
 
     const layerById = {
         grid: (
@@ -235,7 +250,7 @@ const Line = props => {
         layerById.points = (
             <Points
                 key="points"
-                points={points}
+                points={useBrush ? brushPoints : points}
                 symbol={pointSymbol}
                 size={pointSize}
                 color={getPointColor}
@@ -280,7 +295,7 @@ const Line = props => {
         layerById.mesh = (
             <Mesh
                 key="mesh"
-                points={points}
+                points={useBrush ? brushPoints : points}
                 width={innerWidth}
                 height={innerHeight}
                 margin={margin}
@@ -311,6 +326,8 @@ const Line = props => {
             <SvgWrapper width={outerWidth} height={outerHeight} margin={margin}>
                 {layers.map((layer, i) => {
                     if (typeof layer === 'function') {
+                        const layerPoints = useBrush ? brushPoints : points;
+
                         return (
                             <Fragment key={i}>
                                 {layer({
@@ -319,7 +336,7 @@ const Line = props => {
                                     innerHeight,
                                     series,
                                     slices,
-                                    points,
+                                    layerPoints,
                                     xScale,
                                     yScale,
                                     lineGenerator,
