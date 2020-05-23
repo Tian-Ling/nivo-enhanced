@@ -6,20 +6,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import React, { Fragment, useEffect, useState, useMemo } from 'react'
+import React, { Fragment, useState, useMemo } from 'react'
 import { withContainer, useDimensions, useTheme, SvgWrapper, CartesianMarkers } from '@nivo/core'
 import { useInheritedColor } from '@nivo/colors'
 import { Axes, Grid } from '@nivo/axes'
 import { BoxLegendSvg } from '@nivo/legends'
 import { Crosshair } from '@nivo/tooltip'
-import { useLine } from './hooks'
+import { useBrushTool, useLine } from './hooks'
 import { LinePropTypes, LineDefaultProps } from './props'
 import Areas from './Areas'
 import Lines from './Lines'
 import Slices from './Slices'
 import Points from './Points'
 import Mesh from './Mesh'
-import Brush from './Brush'
+import Brush, { BrushActionBar } from './Brush'
 
 const Line = props => {
     const {
@@ -98,10 +98,10 @@ const Line = props => {
     const theme = useTheme()
     const getPointColor = useInheritedColor(pointColor, theme)
     const getPointBorderColor = useInheritedColor(pointBorderColor, theme)
-    const [brushData, setBrushData] = useState(data);
+    const [lineData, setLineData] = useState(data);
 
     const { lineGenerator, areaGenerator, series, xScale, yScale, slices, points } = useLine({
-        data: brushData,
+        data: lineData,
         xScale: xScaleSpec,
         xFormat,
         yScale: yScaleSpec,
@@ -122,6 +122,16 @@ const Line = props => {
     const [brushEnd, setBrushEnd] = useState(null)
     const [isSettingBrushRange, setIsSettingBrushRange] = useState(false);
     const [brushPoints, setBrushPoints] = useState(points);
+    const calculatedOuterHeight = useMemo(
+        () => {
+            if (useBrush) {
+                return outerHeight - 30;
+            }
+
+            return outerHeight;
+        },
+        [outerHeight]
+    )
 
     const legendData = useMemo(
         () =>
@@ -135,27 +145,24 @@ const Line = props => {
         [series]
     )
 
-    useEffect(() => {
-        if (!isSettingBrushRange && brushStart && brushEnd) {
-            const brushes = [brushStart, brushEnd];
-            const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);  
-                      
-            const filteredData = [];
-            data.forEach(datum => {
-                const dataPoints = datum.data.filter(dataPoint => dataPoint.x >= startPoint.data.x && dataPoint.x <= endPoint.data.x);
-                const brushDatum = {...datum, data: dataPoints };
-                filteredData.push(brushDatum);
-            });
-
-            setBrushData(filteredData);
-            setBrushStart(null);
-            setBrushEnd(null);
-        }
-    }, [brushStart, brushEnd, isSettingBrushRange])
-
-    useEffect(() => {
+    const resetBrush = () => {
+        setLineData(data);
         setBrushPoints(points);
-    }, [points])
+    };
+
+    if (useBrush) {
+        useBrushTool({
+            isSettingBrushRange,
+            brushStart,
+            brushEnd,
+            originalData: data,
+            setLineData,
+            setBrushStart,
+            setBrushEnd,
+            points,
+            setBrushPoints
+        });
+    }
 
     const layerById = {
         grid: (
@@ -322,8 +329,8 @@ const Line = props => {
     }
 
     return (
-        <>
-            <SvgWrapper width={outerWidth} height={outerHeight} margin={margin}>
+        <div>
+            <SvgWrapper width={outerWidth} height={calculatedOuterHeight} margin={margin}>
                 {layers.map((layer, i) => {
                     if (typeof layer === 'function') {
                         const layerPoints = useBrush ? brushPoints : points;
@@ -349,7 +356,10 @@ const Line = props => {
                     return layerById[layer]
                 })}
             </SvgWrapper>
-        </>
+            {
+                useBrush ? <BrushActionBar resetBrush={resetBrush} /> : null
+            }
+        </div>
     )
 }
 
