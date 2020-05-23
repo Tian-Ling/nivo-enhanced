@@ -12,13 +12,14 @@ import { useInheritedColor } from '@nivo/colors'
 import { Axes, Grid } from '@nivo/axes'
 import { BoxLegendSvg } from '@nivo/legends'
 import { Crosshair } from '@nivo/tooltip'
-import { useLine } from './hooks'
+import { useBrushTool, useLine } from './hooks'
 import { LinePropTypes, LineDefaultProps } from './props'
 import Areas from './Areas'
 import Lines from './Lines'
 import Slices from './Slices'
 import Points from './Points'
 import Mesh from './Mesh'
+import Brush, { BrushActionBar } from './Brush'
 
 const Line = props => {
     const {
@@ -71,6 +72,8 @@ const Line = props => {
         useMesh,
         debugMesh,
 
+        useBrush,
+
         onMouseEnter,
         onMouseMove,
         onMouseLeave,
@@ -92,8 +95,13 @@ const Line = props => {
         partialMargin
     )
 
+    const theme = useTheme()
+    const getPointColor = useInheritedColor(pointColor, theme)
+    const getPointBorderColor = useInheritedColor(pointBorderColor, theme)
+    const [lineData, setLineData] = useState(data);
+
     const { lineGenerator, areaGenerator, series, xScale, yScale, slices, points } = useLine({
-        data,
+        data: lineData,
         xScale: xScaleSpec,
         xFormat,
         yScale: yScaleSpec,
@@ -108,12 +116,22 @@ const Line = props => {
         enableSlices,
     })
 
-    const theme = useTheme()
-    const getPointColor = useInheritedColor(pointColor, theme)
-    const getPointBorderColor = useInheritedColor(pointBorderColor, theme)
-
     const [currentPoint, setCurrentPoint] = useState(null)
     const [currentSlice, setCurrentSlice] = useState(null)
+    const [brushStart, setBrushStart] = useState(null)
+    const [brushEnd, setBrushEnd] = useState(null)
+    const [isSettingBrushRange, setIsSettingBrushRange] = useState(false);
+    const [brushPoints, setBrushPoints] = useState(points);
+    const calculatedOuterHeight = useMemo(
+        () => {
+            if (useBrush) {
+                return outerHeight - 30;
+            }
+
+            return outerHeight;
+        },
+        [outerHeight]
+    )
 
     const legendData = useMemo(
         () =>
@@ -126,6 +144,25 @@ const Line = props => {
                 .reverse(),
         [series]
     )
+
+    const resetBrush = () => {
+        setLineData(data);
+        setBrushPoints(points);
+    };
+
+    if (useBrush) {
+        useBrushTool({
+            isSettingBrushRange,
+            brushStart,
+            brushEnd,
+            originalData: data,
+            setLineData,
+            setBrushStart,
+            setBrushEnd,
+            points,
+            setBrushPoints
+        });
+    }
 
     const layerById = {
         grid: (
@@ -208,6 +245,10 @@ const Line = props => {
                 tooltip={sliceTooltip}
                 current={currentSlice}
                 setCurrent={setCurrentSlice}
+                isSettingBrushRange={useBrush ? isSettingBrushRange : null}
+                setIsSettingBrushRange={useBrush ? setIsSettingBrushRange : null}
+                setBrushStart={useBrush ? setBrushStart : null}
+                setBrushEnd={useBrush ? setBrushEnd : null}
             />
         )
     }
@@ -216,7 +257,7 @@ const Line = props => {
         layerById.points = (
             <Points
                 key="points"
-                points={points}
+                points={useBrush ? brushPoints : points}
                 symbol={pointSymbol}
                 size={pointSize}
                 color={getPointColor}
@@ -261,7 +302,7 @@ const Line = props => {
         layerById.mesh = (
             <Mesh
                 key="mesh"
-                points={points}
+                points={useBrush ? brushPoints : points}
                 width={innerWidth}
                 height={innerHeight}
                 margin={margin}
@@ -277,31 +318,48 @@ const Line = props => {
         )
     }
 
-    return (
-        <SvgWrapper width={outerWidth} height={outerHeight} margin={margin}>
-            {layers.map((layer, i) => {
-                if (typeof layer === 'function') {
-                    return (
-                        <Fragment key={i}>
-                            {layer({
-                                ...props,
-                                innerWidth,
-                                innerHeight,
-                                series,
-                                slices,
-                                points,
-                                xScale,
-                                yScale,
-                                lineGenerator,
-                                areaGenerator,
-                            })}
-                        </Fragment>
-                    )
-                }
+    if (isInteractive && useBrush && enableSlices && brushStart && brushEnd) {
+        layerById.brush = (
+            <Brush
+                key="brush"
+                brushStart={brushStart}
+                brushEnd={brushEnd}
+            />
+        )
+    }
 
-                return layerById[layer]
-            })}
-        </SvgWrapper>
+    return (
+        <div>
+            <SvgWrapper width={outerWidth} height={calculatedOuterHeight} margin={margin}>
+                {layers.map((layer, i) => {
+                    if (typeof layer === 'function') {
+                        const layerPoints = useBrush ? brushPoints : points;
+
+                        return (
+                            <Fragment key={i}>
+                                {layer({
+                                    ...props,
+                                    innerWidth,
+                                    innerHeight,
+                                    series,
+                                    slices,
+                                    layerPoints,
+                                    xScale,
+                                    yScale,
+                                    lineGenerator,
+                                    areaGenerator,
+                                })}
+                            </Fragment>
+                        )
+                    }
+
+                    return layerById[layer]
+                })}
+            </SvgWrapper>
+            {
+                useBrush ? <BrushActionBar resetBrush={resetBrush} /> : null
+            }
+        </div>
     )
 }
 

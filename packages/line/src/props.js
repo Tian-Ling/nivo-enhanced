@@ -55,6 +55,7 @@ const commonPropTypes = {
                 'points',
                 'mesh',
                 'legends',
+                'brush',
             ]),
             PropTypes.func,
         ])
@@ -132,6 +133,8 @@ const commonPropTypes = {
 
     enableCrosshair: PropTypes.bool.isRequired,
     crosshairType: crosshairPropTypes.type.isRequired,
+
+    useBrush: PropTypes.bool,
 }
 
 export const LinePropTypes = {
@@ -166,6 +169,7 @@ const commonDefaultProps = {
         'crosshair',
         'lines',
         'points',
+        'brush',
         'slices',
         'mesh',
         'legends',
@@ -200,6 +204,7 @@ const commonDefaultProps = {
     debugMesh: false,
     enableCrosshair: true,
     crosshairType: 'bottom-left',
+    useBrush: false,
 }
 
 export const LineDefaultProps = {

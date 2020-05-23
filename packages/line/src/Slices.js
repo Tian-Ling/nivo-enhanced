@@ -10,7 +10,7 @@ import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 import SlicesItem from './SlicesItem'
 
-const Slices = ({ slices, axis, debug, height, tooltip, current, setCurrent }) => {
+const Slices = ({ slices, axis, debug, height, tooltip, current, setCurrent, isSettingBrushRange, setIsSettingBrushRange, setBrushStart, setBrushEnd }) => {
     return slices.map(slice => (
         <SlicesItem
             key={slice.id}
@@ -20,6 +20,10 @@ const Slices = ({ slices, axis, debug, height, tooltip, current, setCurrent }) =
             height={height}
             tooltip={tooltip}
             setCurrent={setCurrent}
+            isSettingBrushRange={isSettingBrushRange}
+            setIsSettingBrushRange={setIsSettingBrushRange}
+            setBrushStart={setBrushStart}
+            setBrushEnd={setBrushEnd}
             isCurrent={current !== null && current.id === slice.id}
         />
     ))
@@ -44,6 +48,10 @@ Slices.propTypes = {
     tooltip: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
     current: PropTypes.object,
     setCurrent: PropTypes.func.isRequired,
+    isSettingBrushRange: PropTypes.bool,
+    setIsSettingBrushRange: PropTypes.func,
+    setBrushStart: PropTypes.func,
+    setBrushEnd: PropTypes.func,
 }
 
 export default memo(Slices)

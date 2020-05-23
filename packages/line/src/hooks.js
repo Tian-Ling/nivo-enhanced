@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { area, line } from 'd3-shape'
 import { curveFromProp, useTheme, useValueFormatter } from '@nivo/core'
 import { useOrdinalColorScale, useInheritedColor } from '@nivo/colors'
@@ -208,3 +208,37 @@ export const useLine = ({
         points,
     }
 }
+
+export const useBrushTool = ({
+    isSettingBrushRange,
+    brushStart,
+    brushEnd,
+    originalData,
+    setLineData,
+    setBrushStart,
+    setBrushEnd,
+    points,
+    setBrushPoints
+}) => {
+    useEffect(() => {
+        if (!isSettingBrushRange && brushStart && brushEnd) {
+            const brushes = [brushStart, brushEnd];
+            const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);  
+
+            const filteredData = [];
+            originalData.forEach(datum => {
+                const dataPoints = datum.data.filter(dataPoint => dataPoint.x >= startPoint.data.x && dataPoint.x <= endPoint.data.x);
+                const brushDatum = {...datum, data: dataPoints };
+                filteredData.push(brushDatum);
+            });
+
+            setLineData(filteredData);
+            setBrushStart(null);
+            setBrushEnd(null);
+        }
+    }, [brushStart, brushEnd, isSettingBrushRange])
+
+    useEffect(() => {
+        setBrushPoints(points);
+    }, [points])
+};
