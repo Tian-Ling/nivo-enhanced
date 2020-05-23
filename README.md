@@ -2,8 +2,11 @@
 
 **nivo enhanced** Fork of nivo adding extra functionality
 
-**Added features**
-Line Component - Brush tool allowing a user to zoom in on a range of values by dragging.
+## Added Features
+
+**Line Component**
+
+Brush tool allowing a user to zoom in on a range of values by dragging.
 
 
 ## Installation
