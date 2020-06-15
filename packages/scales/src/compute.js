@@ -82,6 +82,19 @@ export const generateSeriesXY = (series, xScaleSpec, yScaleSpec) => ({
     y: generateSeriesAxis(series, 'y', yScaleSpec),
 })
 
+export const getSeriesDataParser = (scaleSpec) => {
+    const { type } = scaleSpec;
+
+    if (type === 'linear') {
+        return (d) => d === null ? null : parseFloat(d);
+    } else if (type === 'time' && scaleSpec.format !== 'native') {
+        const parseTime = createDateNormalizer(scaleSpec);
+        return (d) => d === null ? null : parseTime(d);
+    }
+
+    return (d) => d;
+}
+
 /**
  * Normalize data according to scale type, (time => Date, linear => Number)
  * compute sorted unique values and min/max.
