@@ -156,11 +156,12 @@ const Line = props => {
             brushStart,
             brushEnd,
             originalData: data,
+            xScale: xScaleSpec,
             setLineData,
             setBrushStart,
             setBrushEnd,
             points,
-            setBrushPoints
+            setBrushPoints,
         });
     }
 

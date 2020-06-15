@@ -10,7 +10,7 @@ import { useEffect, useMemo } from 'react'
 import { area, line } from 'd3-shape'
 import { curveFromProp, useTheme, useValueFormatter } from '@nivo/core'
 import { useOrdinalColorScale, useInheritedColor } from '@nivo/colors'
-import { computeXYScalesForSeries } from '@nivo/scales'
+import { computeXYScalesForSeries, getSeriesDataParser } from '@nivo/scales'
 import { LineDefaultProps } from './props'
 
 export const useLineGenerator = ({ curve }) => {
@@ -214,20 +214,22 @@ export const useBrushTool = ({
     brushStart,
     brushEnd,
     originalData,
+    xScale: xScaleSpec = LineDefaultProps.xScale,
     setLineData,
     setBrushStart,
     setBrushEnd,
     points,
-    setBrushPoints
+    setBrushPoints,
 }) => {
     useEffect(() => {
         if (!isSettingBrushRange && brushStart && brushEnd) {
             const brushes = [brushStart, brushEnd];
-            const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);  
+            const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);
+            const dataParser = getSeriesDataParser(xScaleSpec);
 
             const filteredData = [];
             originalData.forEach(datum => {
-                const dataPoints = datum.data.filter(dataPoint => dataPoint.x >= startPoint.data.x && dataPoint.x <= endPoint.data.x);
+                const dataPoints = datum.data.filter(dataPoint => dataParser(dataPoint.x) >= startPoint.data.x && dataParser(dataPoint.x) <= endPoint.data.x);
                 const brushDatum = {...datum, data: dataPoints };
                 filteredData.push(brushDatum);
             });

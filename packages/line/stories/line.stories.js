@@ -1012,52 +1012,41 @@ stories.add(
     }
 )
 
-const brushData = [
-    {
-        "id": "brush data",
-        "color": "hsl(290, 70%, 50%)",
-        "data": [
-            {
-                "x": 0,
-                "y": 178
-            },
-            {
-                "x": 1,
-                "y": 297
-            },
-            {
-                "x": 2,
-                "y": 3
-            },
-            {
-                "x": 3,
-                "y": 120
-            },
-            {
-                "x": 4,
-                "y": 128
-            },
-            {
-                "x": 5,
-                "y": 289
-            },
-            {
-                "x": 6,
-                "y": 196
-            }
-        ]
-    }
-];
+const largeBrushDataSet = [{
+    "id": "brush data",
+    "color": "hsl(290, 70%, 50%)",
+    "data": []
+}];
+
+for (let i = 0; i < 1000; i++) {
+    largeBrushDataSet[0].data.push({
+        "x": i,
+        "y": Math.floor(Math.random() * 100 + 1)
+    });
+}
 
 stories.add(
     'brush tool',
     () => (
         <div style={{width: 900, height: 400}}>
             <ResponsiveLine
-                data={brushData}
+                animate={false}
+                axisBottom={{
+                    format: '%s',
+                    tickValues: 4,
+                }}
+                data={largeBrushDataSet}
+                enableGridX={false}
+                enableGridY={false}
+                enablePoints={false}
                 enableSlices={'x'}
                 margin={{ top: 20, right: 20, bottom: 60, left: 80 }}
                 useBrush
+                xScale={{
+                    type: 'time',
+                    format: '%s',
+                    precision: 'second',
+                }}
             />
         </div>
     ),
