@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import { useEffect, useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo } from 'react'
 import { area, line } from 'd3-shape'
 import { curveFromProp, useTheme, useValueFormatter } from '@nivo/core'
 import { useOrdinalColorScale, useInheritedColor } from '@nivo/colors'
@@ -244,3 +244,42 @@ export const useBrushTool = ({
         setBrushPoints(points);
     }, [points])
 };
+
+export const useLimitPoints = ({
+    maxNumberOfPoints,
+    lineData,
+    setLineData,
+}) => {
+    useLayoutEffect(() => {
+        if (maxNumberOfPoints && lineData.some(datum => datum.data.length > maxNumberOfPoints))
+        {
+            const newData = [];
+    
+            lineData.forEach(datum => {
+                const dataSize = datum.data.length;
+    
+                if (dataSize > maxNumberOfPoints) {
+                    const shrinkFactor = Math.ceil(dataSize/maxNumberOfPoints);
+    
+                    const originalData = datum.data;
+                    const shrunkData = [];
+        
+                    for (let i = 0; i < dataSize; i += shrinkFactor) {
+                        shrunkData.push(originalData[i]);    
+                    }   
+                    
+                    // Always show the last point
+                    if (dataSize % shrinkFactor !== 0) {
+                        shrunkData.push(originalData[originalData.length-1]);
+                    }
+        
+                    newData.push({ ...datum, data: shrunkData });
+                } else {
+                    newData.push(datum);
+                }
+            });
+    
+            setLineData(newData);
+        }
+    }, [lineData, maxNumberOfPoints])
+}

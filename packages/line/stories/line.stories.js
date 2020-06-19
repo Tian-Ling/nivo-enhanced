@@ -1047,6 +1047,7 @@ stories.add(
                     format: '%s',
                     precision: 'second',
                 }}
+                maxNumberOfPoints={100}
             />
         </div>
     ),

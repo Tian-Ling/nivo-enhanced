@@ -12,7 +12,7 @@ import { useInheritedColor } from '@nivo/colors'
 import { Axes, Grid } from '@nivo/axes'
 import { BoxLegendSvg } from '@nivo/legends'
 import { Crosshair } from '@nivo/tooltip'
-import { useBrushTool, useLine } from './hooks'
+import { useBrushTool, useLimitPoints, useLine } from './hooks'
 import { LinePropTypes, LineDefaultProps } from './props'
 import Areas from './Areas'
 import Lines from './Lines'
@@ -87,6 +87,8 @@ const Line = props => {
 
         enableCrosshair,
         crosshairType,
+
+        maxNumberOfPoints,
     } = props
 
     const { margin, innerWidth, innerHeight, outerWidth, outerHeight } = useDimensions(
@@ -99,6 +101,14 @@ const Line = props => {
     const getPointColor = useInheritedColor(pointColor, theme)
     const getPointBorderColor = useInheritedColor(pointBorderColor, theme)
     const [lineData, setLineData] = useState(data);
+
+    if (maxNumberOfPoints) {
+        useLimitPoints({
+            maxNumberOfPoints,
+            lineData,
+            setLineData,
+        });
+    }
 
     const { lineGenerator, areaGenerator, series, xScale, yScale, slices, points } = useLine({
         data: lineData,
