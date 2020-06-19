@@ -1041,13 +1041,14 @@ stories.add(
                 enablePoints={false}
                 enableSlices={'x'}
                 margin={{ top: 20, right: 20, bottom: 60, left: 80 }}
-                useBrush
+                useBrush={{
+                    maxNumberOfPoints: 100
+                }}
                 xScale={{
                     type: 'time',
                     format: '%s',
                     precision: 'second',
                 }}
-                maxNumberOfPoints={100}
             />
         </div>
     ),

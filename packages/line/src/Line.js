@@ -87,8 +87,6 @@ const Line = props => {
 
         enableCrosshair,
         crosshairType,
-
-        maxNumberOfPoints,
     } = props
 
     const { margin, innerWidth, innerHeight, outerWidth, outerHeight } = useDimensions(
@@ -101,14 +99,6 @@ const Line = props => {
     const getPointColor = useInheritedColor(pointColor, theme)
     const getPointBorderColor = useInheritedColor(pointBorderColor, theme)
     const [lineData, setLineData] = useState(data);
-
-    if (maxNumberOfPoints) {
-        useLimitPoints({
-            maxNumberOfPoints,
-            lineData,
-            setLineData,
-        });
-    }
 
     const { lineGenerator, areaGenerator, series, xScale, yScale, slices, points } = useLine({
         data: lineData,
@@ -161,6 +151,16 @@ const Line = props => {
     };
 
     if (useBrush) {
+        const { maxNumberOfPoints } = useBrush;
+
+        if (maxNumberOfPoints) {
+            useLimitPoints({
+                maxNumberOfPoints: maxNumberOfPoints,
+                lineData,
+                setLineData,
+            });
+        }
+
         useBrushTool({
             isSettingBrushRange,
             brushStart,
