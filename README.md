@@ -34,6 +34,8 @@ Usage Example:
 </Line>
 ```
 
+1000 point data set limited to 100 displayed:
+![alt text](https://github.com/Tian-Ling/nivo-enhanced/blob/master/examples/gifs/1000points_brushtool_100limited.gif "1000 point data set limited to 100 displayed")
 
 ## Installation
 
