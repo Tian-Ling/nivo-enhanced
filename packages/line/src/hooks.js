@@ -213,6 +213,7 @@ export const useBrushTool = ({
     isSettingBrushRange,
     brushStart,
     brushEnd,
+    brushDataCallback,
     originalData,
     xScale: xScaleSpec = LineDefaultProps.xScale,
     setLineData,
@@ -234,6 +235,10 @@ export const useBrushTool = ({
                 filteredData.push(brushDatum);
             });
 
+            if (brushDataCallback) {
+                brushDataCallback(filteredData);
+            }
+            
             setLineData(filteredData);
             setBrushStart(null);
             setBrushEnd(null);

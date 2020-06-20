@@ -151,7 +151,7 @@ const Line = props => {
     };
 
     if (useBrush) {
-        const { maxNumberOfPoints } = useBrush;
+        const { brushDataCallback, maxNumberOfPoints } = useBrush;
 
         if (maxNumberOfPoints) {
             useLimitPoints({
@@ -165,6 +165,7 @@ const Line = props => {
             isSettingBrushRange,
             brushStart,
             brushEnd,
+            brushDataCallback: brushDataCallback ? brushDataCallback : null,
             originalData: data,
             xScale: xScaleSpec,
             setLineData,
