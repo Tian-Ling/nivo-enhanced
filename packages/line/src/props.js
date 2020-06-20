@@ -134,7 +134,7 @@ const commonPropTypes = {
     enableCrosshair: PropTypes.bool.isRequired,
     crosshairType: crosshairPropTypes.type.isRequired,
 
-    useBrush: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape({ maxNumberOfPoints: PropTypes.number })]),
+    useBrush: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape({ brushDataCallback: PropTypes.func, maxNumberOfPoints: PropTypes.number })]),
 }
 
 export const LinePropTypes = {
