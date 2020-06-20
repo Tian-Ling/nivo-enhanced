@@ -134,7 +134,7 @@ const commonPropTypes = {
     enableCrosshair: PropTypes.bool.isRequired,
     crosshairType: crosshairPropTypes.type.isRequired,
 
-    useBrush: PropTypes.bool,
+    useBrush: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape({ maxNumberOfPoints: PropTypes.number })]),
 }
 
 export const LinePropTypes = {
@@ -204,7 +204,7 @@ const commonDefaultProps = {
     debugMesh: false,
     enableCrosshair: true,
     crosshairType: 'bottom-left',
-    useBrush: false,
+    useBrush: null,
 }
 
 export const LineDefaultProps = {
