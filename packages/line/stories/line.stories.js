@@ -1042,6 +1042,7 @@ stories.add(
                 enableSlices={'x'}
                 margin={{ top: 20, right: 20, bottom: 60, left: 80 }}
                 useBrush={{
+                    brushDataCallback: (filteredData) => { console.log(filteredData) },
                     maxNumberOfPoints: 100
                 }}
                 xScale={{
