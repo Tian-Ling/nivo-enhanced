@@ -1,10 +1,9 @@
 {
-  "name": "@nivo/scales",
-  "version": "0.61.0",
+  "name": "@nivo-enhanced/scales",
+  "version": "1.0.0",
   "license": "MIT",
   "author": {
-    "name": "Raphaël Benitte",
-    "url": "https://github.com/plouc"
+    "name": "Tian Ling"
   },
   "main": "./dist/nivo-scales.cjs.js",
   "module": "./dist/nivo-scales.esm.js",
