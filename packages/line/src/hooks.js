@@ -10,7 +10,7 @@ import { useEffect, useLayoutEffect, useMemo } from 'react'
 import { area, line } from 'd3-shape'
 import { curveFromProp, useTheme, useValueFormatter } from '@nivo/core'
 import { useOrdinalColorScale, useInheritedColor } from '@nivo/colors'
-import { computeXYScalesForSeries, getSeriesDataParser } from '@nivo/scales'
+import { computeXYScalesForSeries, getSeriesDataParser } from 'nivo-enhanced-scales'
 import { LineDefaultProps } from './props'
 
 export const useLineGenerator = ({ curve }) => {
