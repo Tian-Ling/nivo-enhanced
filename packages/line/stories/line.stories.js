@@ -1012,6 +1012,14 @@ stories.add(
     }
 )
 
+const convertToHoursMinutesSeconds = (totalSeconds) => {
+    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+    const seconds = String(Math.floor((totalSeconds % 3600) % 60)).padStart(2, '0');
+  
+    return `${hours}:${minutes}:${seconds}`;
+}
+
 const largeBrushDataSet = [{
     "id": "brush data",
     "color": "hsl(290, 70%, 50%)",
@@ -1032,7 +1040,12 @@ stories.add(
             <ResponsiveLine
                 animate={false}
                 axisBottom={{
-                    format: '%M',
+                    format: (value) => {
+                        const seconds = value.getTime()/1000;
+                        const formattedTime = convertToHoursMinutesSeconds(seconds);
+
+                        return formattedTime;
+                    },
                     tickValues: 4,
                 }}
                 data={largeBrushDataSet}
@@ -1043,7 +1056,7 @@ stories.add(
                 margin={{ top: 20, right: 20, bottom: 60, left: 80 }}
                 useBrush={{
                     brushDataCallback: (filteredData) => { console.log(filteredData) },
-                    maxNumberOfPoints: 100
+                    maxNumberOfPoints: 100,
                 }}
                 xScale={{
                     type: 'time',
