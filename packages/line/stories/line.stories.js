@@ -1032,7 +1032,7 @@ stories.add(
             <ResponsiveLine
                 animate={false}
                 axisBottom={{
-                    format: '%m',
+                    format: '%M',
                     tickValues: 4,
                 }}
                 data={largeBrushDataSet}
@@ -1047,7 +1047,7 @@ stories.add(
                 }}
                 xScale={{
                     type: 'time',
-                    format: '%S',
+                    format: '%s',
                     precision: 'second',
                 }}
             />
