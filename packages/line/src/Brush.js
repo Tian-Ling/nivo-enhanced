@@ -30,7 +30,7 @@ const Brush = ({ brushStart, brushEnd }) => {
 
 const BrushActionBar = memo(function BrushActionBar(props) {
   return (
-    <div style={BrushStyle}>
+    <div className={"brush-action-bar"} style={BrushStyle}>
       <button style={BrushButtonStyle} onClick={props.resetBrush}>Reset</button>
     </div>
   )
