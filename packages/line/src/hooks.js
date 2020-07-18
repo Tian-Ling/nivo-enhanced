@@ -226,10 +226,11 @@ export const useBrushTool = ({
         if (!isSettingBrushRange && brushStart && brushEnd) {
             const brushes = [brushStart, brushEnd];
             const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);
+            const brushCallback = brushDataCallback instanceof Function ? brushDataCallback : () => {};
 
             if (startPoint === endPoint) {
                 setLineData(originalData);
-                brushDataCallback(filteredData);
+                brushCallback(originalData);
                 return;
             }
 
@@ -242,9 +243,7 @@ export const useBrushTool = ({
                 filteredData.push(brushDatum);
             });
 
-            if (brushDataCallback) {
-                brushDataCallback(filteredData);
-            }
+            brushCallback(filteredData);
             
             setLineData(filteredData);
             setBrushStart(null);
