@@ -9,8 +9,7 @@ const BrushStyle = {
 const BrushButtonStyle = {
   backgroundColor: 'white',
   display: 'inline-block',
-  height: '25px',
-  width: '50px',
+  'fontSize': 'small'
 }
 
 const Brush = ({ brushStart, brushEnd }) => {
