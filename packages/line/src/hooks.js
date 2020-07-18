@@ -226,6 +226,13 @@ export const useBrushTool = ({
         if (!isSettingBrushRange && brushStart && brushEnd) {
             const brushes = [brushStart, brushEnd];
             const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);
+
+            if (startPoint === endPoint) {
+                setLineData(originalData);
+                brushDataCallback(filteredData);
+                return;
+            }
+
             const dataParser = getSeriesDataParser(xScaleSpec);
 
             const filteredData = [];
