@@ -1063,6 +1063,10 @@ stories.add(
                     format: '%s',
                     precision: 'second',
                 }}
+                yScale={{
+                    type: 'linear',
+                    max: 100,
+                }}
             />
         </div>
     ),

@@ -115,6 +115,11 @@ declare module 'nivo-enhanced-line' {
         size: number
     }
 
+    export type UseBrushProps = {
+        brushDataCallback?: (point: Serie[]) => void;
+        maxNumberOfPoints?: number;
+    }
+
     export interface LineProps {
         data: Serie[]
 
@@ -182,6 +187,8 @@ declare module 'nivo-enhanced-line' {
         crosshairType?: CrosshairType
 
         legends?: LegendProps[]
+
+        useBrush?: UseBrushProps
     }
 
     export interface LineSvgProps extends LineProps, MotionProps {
