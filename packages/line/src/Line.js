@@ -145,13 +145,17 @@ const Line = props => {
         [series]
     )
 
-    const resetBrush = () => {
-        setLineData(data);
-        setBrushPoints(points);
-    };
+    let resetBrush = () => {};
 
     if (useBrush) {
         const { brushDataCallback, maxNumberOfPoints } = useBrush;
+        const brushCallback = brushDataCallback instanceof Function ? brushDataCallback : () => {};
+
+        resetBrush = () => {
+            setLineData(data);
+            setBrushPoints(points);
+            brushCallback(data);
+        };
 
         if (maxNumberOfPoints) {
             useLimitPoints({
@@ -165,7 +169,7 @@ const Line = props => {
             isSettingBrushRange,
             brushStart,
             brushEnd,
-            brushDataCallback: brushDataCallback ? brushDataCallback : null,
+            brushDataCallback: brushCallback,
             originalData: data,
             xScale: xScaleSpec,
             setLineData,
