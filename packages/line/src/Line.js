@@ -12,7 +12,7 @@ import { useInheritedColor } from '@nivo/colors'
 import { Axes, Grid } from '@nivo/axes'
 import { BoxLegendSvg } from '@nivo/legends'
 import { Crosshair } from '@nivo/tooltip'
-import { useBrushTool, useLimitPoints, useLine } from './hooks'
+import { getDataPoints, useBrushTool, useLine } from './hooks'
 import { LinePropTypes, LineDefaultProps } from './props'
 import Areas from './Areas'
 import Lines from './Lines'
@@ -98,7 +98,7 @@ const Line = props => {
     const theme = useTheme()
     const getPointColor = useInheritedColor(pointColor, theme)
     const getPointBorderColor = useInheritedColor(pointBorderColor, theme)
-    const [lineData, setLineData] = useState(data);
+    const [lineData, setLineData] = useState(getDataPoints({ maxNumberOfPoints: useBrush ? useBrush.maxNumberOfPoints : {}, data }));
 
     const { lineGenerator, areaGenerator, series, xScale, yScale, slices, points } = useLine({
         data: lineData,
@@ -152,18 +152,10 @@ const Line = props => {
         const brushCallback = brushDataCallback instanceof Function ? brushDataCallback : () => {};
 
         resetBrush = () => {
-            setLineData(data);
+            setLineData(getDataPoints({ data, maxNumberOfPoints }));
             setBrushPoints(points);
             brushCallback(data);
         };
-
-        if (maxNumberOfPoints) {
-            useLimitPoints({
-                maxNumberOfPoints: maxNumberOfPoints,
-                lineData,
-                setLineData,
-            });
-        }
 
         useBrushTool({
             isSettingBrushRange,
@@ -171,6 +163,7 @@ const Line = props => {
             brushEnd,
             brushDataCallback: brushCallback,
             originalData: data,
+            maxNumberOfPoints,
             xScale: xScaleSpec,
             setLineData,
             setBrushStart,
