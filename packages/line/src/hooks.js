@@ -253,7 +253,6 @@ export const useBrushTool = ({
     brushEnd,
     brushDataCallback,
     originalData,
-    maxNumberOfPoints,
     xScale: xScaleSpec = LineDefaultProps.xScale,
     setLineData,
     setBrushStart,
@@ -267,7 +266,7 @@ export const useBrushTool = ({
             const [startPoint, endPoint] = [...brushes].sort((brushA, brushB) => brushA.x - brushB.x).map(brush => brush.points[0]);
 
             if (startPoint === endPoint) {
-                setLineData(getDataPoints({ data: originalData, maxNumberOfPoints }));
+                setLineData(originalData);
                 brushDataCallback(originalData);
                 return;
             }
@@ -283,7 +282,7 @@ export const useBrushTool = ({
 
             brushDataCallback(filteredData);
             
-            setLineData(getDataPoints({ maxNumberOfPoints, data: filteredData }));
+            setLineData(filteredData);
             setBrushStart(null);
             setBrushEnd(null);
         }
