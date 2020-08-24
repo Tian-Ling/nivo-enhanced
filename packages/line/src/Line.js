@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import React, { Fragment, useState, useMemo } from 'react'
+import React, { Fragment, useEffect, useState, useMemo } from 'react'
 import { withContainer, useDimensions, useTheme, SvgWrapper, CartesianMarkers } from '@nivo/core'
 import { useInheritedColor } from '@nivo/colors'
 import { Axes, Grid } from '@nivo/axes'
@@ -98,10 +98,18 @@ const Line = props => {
     const theme = useTheme()
     const getPointColor = useInheritedColor(pointColor, theme)
     const getPointBorderColor = useInheritedColor(pointBorderColor, theme)
-    const [lineData, setLineData] = useState(getDataPoints({ maxNumberOfPoints: useBrush ? useBrush.maxNumberOfPoints : {}, data }));
+    const [lineData, setLineData] = useState(data);
+
+    const dataPoints = useMemo(() => {
+        return getDataPoints({ maxNumberOfPoints: useBrush ? useBrush.maxNumberOfPoints : {}, data: lineData });
+    }, [lineData, useBrush]);
+
+    useEffect(() => {
+        setLineData(data);
+    }, [data]);
 
     const { lineGenerator, areaGenerator, series, xScale, yScale, slices, points } = useLine({
-        data: lineData,
+        data: dataPoints,
         xScale: xScaleSpec,
         xFormat,
         yScale: yScaleSpec,
@@ -148,11 +156,11 @@ const Line = props => {
     let resetBrush = () => {};
 
     if (useBrush) {
-        const { brushDataCallback, maxNumberOfPoints } = useBrush;
+        const { brushDataCallback } = useBrush;
         const brushCallback = brushDataCallback instanceof Function ? brushDataCallback : () => {};
 
         resetBrush = () => {
-            setLineData(getDataPoints({ data, maxNumberOfPoints }));
+            setLineData(data);
             setBrushPoints(points);
             brushCallback(data);
         };
@@ -163,7 +171,6 @@ const Line = props => {
             brushEnd,
             brushDataCallback: brushCallback,
             originalData: data,
-            maxNumberOfPoints,
             xScale: xScaleSpec,
             setLineData,
             setBrushStart,
@@ -366,7 +373,7 @@ const Line = props => {
                 })}
             </SvgWrapper>
             {
-                useBrush ? <BrushActionBar resetBrush={resetBrush} /> : null
+                useBrush ? <BrushActionBar style={useBrush.brushToolbarStyle} resetBrush={resetBrush} /> : null
             }
         </div>
     )

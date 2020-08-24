@@ -9,7 +9,7 @@ const BrushStyle = {
 const BrushButtonStyle = {
   backgroundColor: 'white',
   display: 'inline-block',
-  'fontSize': 'small'
+  fontSize: 'small'
 }
 
 const Brush = ({ brushStart, brushEnd }) => {
@@ -27,10 +27,10 @@ const Brush = ({ brushStart, brushEnd }) => {
   )
 }
 
-const BrushActionBar = memo(function BrushActionBar(props) {
+const BrushActionBar = memo(function BrushActionBar({ style, resetBrush }) {
   return (
     <div className={"brush-action-bar"} style={BrushStyle}>
-      <button style={BrushButtonStyle} onClick={props.resetBrush}>Reset</button>
+      <button className={"brush-reset-button"} style={style ? style : BrushButtonStyle} onClick={resetBrush}>Reset</button>
     </div>
   )
 })
@@ -41,6 +41,7 @@ Brush.propTypes = {
 }
 
 BrushActionBar.propTypes = {
+  style: PropTypes.object,
   resetBrush: PropTypes.func.isRequired,
 }
 

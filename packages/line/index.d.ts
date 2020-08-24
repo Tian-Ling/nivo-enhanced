@@ -117,6 +117,7 @@ declare module 'nivo-enhanced-line' {
 
     export type UseBrushProps = {
         brushDataCallback?: (point: Serie[]) => void;
+        brushToolbarStyle?: { [property: string]: string };
         maxNumberOfPoints?: number;
     }
 
