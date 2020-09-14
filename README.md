@@ -21,6 +21,9 @@ A function that is passed the value of the filtered data set after the brush too
 
 This parameter sets the maximum number of points that are displayed on the graph at any one time. When the brush tool is used to select a particular range this parameter will still limit the number of points shown if it greater than the value provided.
 
+`brushToolbarStyle`
+
+An inline style to be applied to the reset button when using the brush tool.
 
 Usage Example:
 ```
@@ -30,6 +33,7 @@ Usage Example:
   useBrush={{
     brushDataCallback: (filteredData) => { console.log(filteredData) }
     maxNumberOfPoints: 100
+    brushToolbarStyle: { backgroundColor: 'white' }
   }}
 </Line>
 ```
@@ -41,14 +45,14 @@ Usage Example:
 
 **Line Component**
 
-Install the scoped `@nivo-enhanced/line` package through yarn or NPM.
+Install `nivo-enhanced-line` package through yarn or NPM.
 
 With yarn:
 ```
-yarn add @nivo-enhanced/line
+yarn add nivo-enhanced-line
 ```
 
 With npm:
 ```
-npm install @nivo-enhanced/line
+npm install nivo-enhanced-line
 ```
